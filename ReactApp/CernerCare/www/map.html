@@ -1,0 +1,137 @@
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="title" content="ScoopThemes">
+        <meta name="ROBOTS" content="Bootstrap 3 Themes, Responsive Themes, Bootstrap 3 Responsive, Wordpress Themes, Clean Themes, Modern Themes, Flat Themes, Flat UI, UI Design, UX Design, Web design, responsive bootstrap, Jquery Plugins, Free Plugins, Premium Bootstrap themes, Bootstrap 3, Premium Web Templates, Bootstrap Templates, Bootstrap Responsive Templates, Admin, Dashboard, Admin Templates, Admin Responsive, Admin responsive themes">
+        <meta name="description" content="Solutions For Web Developers Form ( Web Templates, Web Themes, Jquery Plugins, UX Design.. ) Whatever They Need.">
+        <meta name="abstract" content="Solutions For Web Developers Form ( Web Templates, Web Themes, Jquery Plugins, UX Design.. ) Whatever They Need.">
+    
+        <meta name="author" content="www.scoopthemes.com">
+        <meta name="publisher" content="www.scoopthemes.com">
+        <meta name="copyright" content="www.scoopthemes.com">
+        <meta name="revisit-after" content="2 days">
+        <link rel="shortcut icon" href="assets/img/favicon.png">
+        <title>Cerner Care</title>
+
+        <!-- Bootstrap -->
+        <link href="assets/css/bootstrap.css" rel="stylesheet">
+        <link href="assets/css/font-awesome.css" rel="stylesheet">
+        <link href="assets/css/bootstrap-theme.css" rel="stylesheet">
+        <link rel="stylesheet" href="assets/css/animations.css">
+
+        <!-- siimple style -->
+        <link href="assets/css/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <h1>Find Care</h1>
+        <div id="googleMap" style="width:100%;height:100%;"></div>
+        <div id="loading"></div>
+
+        <!-- java script starts here-->
+        <script>
+        var infowindow;
+        var map;
+        var service;
+        var myLatLng;
+        function onReady(callback) {
+            var intervalID = window.setInterval(checkReady, 1000);
+            function checkReady() {
+                if (document.getElementsByTagName('body')[0] !== undefined) {
+                    window.clearInterval(intervalID);
+                    callback.call(this);
+                }
+            }
+        }
+
+        function show(id, value) {
+            document.getElementById(id).style.display = value ? 'block' : 'none';
+        }
+
+        onReady(function () {
+            show('googleMap', true);
+            show('loading', false);
+        });
+
+        var im = 'http://www.robotwoods.com/dev/misc/bluecircle.png';
+            function myMap(){
+                navigator.geolocation.getCurrentPosition(initialize,fail);
+            }
+        //start initialize
+            function initialize(position) {
+                myLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                var mapOptions = {
+                zoom: 15,
+                center: myLatLng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+                }
+                map = new google.maps.Map(document.getElementById('googleMap'),
+                                            mapOptions);
+                var userMarker = new google.maps.Marker({
+                    position: myLatLng,
+                    map: map,
+                    animation: google.maps.Animation.BOUNCE,
+                    icon: "assets/img/me.png",
+                    title: 'You are here'
+                });
+                 var infowindow1 = new google.maps.InfoWindow({
+    content: 'you are here'
+  });
+		
+		userMarker.addListener('click', function() {
+    infowindow1.open(map, userMarker);
+  });
+
+        var request = {
+            location: myLatLng,
+            radius: 2000,
+            types: ['hospital','health'] // this is where you set the map to get the hospitals and health related places
+        };
+        infowindow = new google.maps.InfoWindow();
+        service = new google.maps.places.PlacesService(map);
+        service.nearbySearch(request, callback);
+
+            }
+        //end initialize
+
+        function callback(results, status) {
+        if (status == google.maps.places.PlacesServiceStatus.OK) {
+            for (var i = 0; i < results.length; i++) {
+            createMarker(results[i]);
+            }
+        }
+        }
+
+        function createMarker(place) {
+        var placeLoc = place.geometry.location;
+        var marker = new google.maps.Marker({
+            map: map,
+            position: place.geometry.location,
+            center: myLatLng,
+            animation: google.maps.Animation.DROP,
+            icon: "assets/img/hospital.png"
+        });
+        var respond = { reference: place.reference };
+        service.getDetails(respond, function(details, status) {
+            google.maps.event.addListener(marker, 'click', function() {
+            infowindow.setContent(details.name + "<br />" + details.formatted_address +"<br />"  + details.rating + "<br />" + details.formatted_phone_number);
+            infowindow.open(map, this);
+            });
+        });
+        
+        }
+
+        //start fail
+            function fail(){
+                alert('navigator.geolocation failed, may not be supported');
+            }
+
+
+        </script>
+
+        <script src="https://maps.googleapis.com/maps/api/js?sensor=true&libraries=places&callback=myMap"></script>
+
+
+    </body>
+</html>
